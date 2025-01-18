@@ -10,7 +10,7 @@ from services.Database import Database
 from services.Emailer import Emailer
 
 from api.auth_routes import auth_bp
-from api.database_routes import db_bp
+from server.api.classroom_routes import classroom_bp
 from api.email_routes import email_bp
 
 from db_config import db, configure_db
@@ -65,7 +65,7 @@ def create_app():
             
     # REGISTER BLUEPRINTS
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
-    app.register_blueprint(db_bp, url_prefix='/api/db')
+    app.register_blueprint(classroom_bp, url_prefix='/api/classroom')
     app.register_blueprint(email_bp, url_prefix='/api/email')
 
     return app, db

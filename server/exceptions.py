@@ -40,3 +40,27 @@ class MissingFields(Exception):
         """
         """
         super().__init__("Missing fields")
+
+class ClassroomNotFound(Exception):
+    """
+    """
+    def __init__(self):
+        """
+        """
+        super().__init__("Classroom not found")
+
+class UserNotFound(Exception):
+    """
+    """
+    def __init__(self):
+        """
+        """
+        super().__init__("User not found")
+
+class Unauthorized(Exception):
+    """
+    """
+    def __init__(self):
+        """
+        """
+        super().__init__("Unauthorized")
