@@ -2,10 +2,10 @@
 """
 
 # AUTHENTICATOR CLASS
-class Database:
+class Emailer:
     """
     """
-    def __init__(self, db):
+    def __init__(self):
         """
         """
-        self.db = db
+        pass
