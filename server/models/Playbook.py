@@ -5,8 +5,8 @@
 from db_config import db
 
 
-# PLAY BOOK DATA CLASS
-class PlayBook(db.Model):
+# PLAYBOOK DATA CLASS
+class Playbook(db.Model):
     __tablename__ = 'playbooks'
     
     id = db.Column(db.Integer, primary_key=True)

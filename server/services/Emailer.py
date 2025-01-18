@@ -1,7 +1,7 @@
 """
 """
 
-# AUTHENTICATOR CLASS
+# EMAILER CLASS
 class Emailer:
     """
     """
