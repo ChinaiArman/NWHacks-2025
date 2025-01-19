@@ -32,7 +32,7 @@ def create_app():
     """
     """
     app = Flask(__name__)
-    CORS(app, resources={r"/api/*": {"origins": CLIENT_URL, "allow_headers": ["Content-Type"]}}, supports_credentials=True)
+    CORS(app, resources={r"/api/*": {"origins": "http://" + CLIENT_URL, "allow_headers": ["Content-Type"]}}, supports_credentials=True)
 
     # CONFIGURE SERVICES
     app.config['database'] = Database(db)

@@ -4,7 +4,7 @@
 # IMPORTS
 from flask import Blueprint, jsonify, request, current_app, session
 
-from services.decorators import verified_login_required, unverified_login_required
+from services.decorators import unverified_login_required
 
 from exceptions import MissingFields
 
@@ -57,26 +57,25 @@ def register() -> tuple:
             raise MissingFields()
         user = db.create_user(username, email, authenticator.encrypt_password(password))
         session['user_id'] = user.id
+        session.permanent = True
         return jsonify({"message": "registration successful"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 401
     
-@auth_bp.route('/is-verified', methods=['GET'])
-@verified_login_required
-def is_verified() -> tuple:
+@auth_bp.route('/check-auth-level', methods=['GET'])
+def check_auth() -> tuple:
     """
     """
     try:
-        return jsonify({"message": "User is verified"}), 200
+        if "user_id" in session:
+            db = current_app.config['database']
+            user = db.get_user_by_id(session.get('user_id'))
+            if not user.is_verified:
+                return jsonify({"auth_level": "unverified"}), 200
+            else:
+                return jsonify({"auth_level": "verified"}), 200
+        else:
+            return jsonify({"auth_level": "unauthenticated"}), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 401
-    
-@auth_bp.route('/is-unverified', methods=['GET'])
-@unverified_login_required
-def is_unverified() -> tuple:
-    """
-    """
-    try:
-        return jsonify({"message": "User is unverified"}), 200
-    except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 401

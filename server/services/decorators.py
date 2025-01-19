@@ -9,33 +9,10 @@ from flask import session, jsonify, current_app
 # DECORATORS
 def verified_login_required(func: callable) -> callable:
     """
-    A decorator to require login for a route.
-
-    Args
-    ----
-    func (callable): The function to decorate.
-
-    Returns
-    -------
-    wrapper (callable): The decorated function.
-
-    Author: @ChinaiArman
     """
     @wraps(func)
     def wrapper(*args, **kwargs) -> callable:
         """
-        The wrapper function for the decorator.
-
-        Args
-        ----
-        *args: The arguments for the function.
-        **kwargs: The keyword arguments for the function.
-
-        Returns
-        -------
-        func(*args, **kwargs): The decorated function.
-
-        Author: @ChinaiArman
         """
         if "user_id" in session:
             db = current_app.config['database']
@@ -50,17 +27,6 @@ def verified_login_required(func: callable) -> callable:
 
 def unverified_login_required(func: callable) -> callable:
     """
-    A decorator to require login for a route.
-    
-    Args
-    ----
-    func (callable): The function to decorate.
-    
-    Returns
-    -------
-    wrapper (callable): The decorated function.
-
-    Author: @ChinaiArman
     """
     @wraps(func)
     def wrapper(*args, **kwargs) -> callable:

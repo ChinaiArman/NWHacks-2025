@@ -23,6 +23,14 @@ class Database:
         self.db = db
 
     # USER METHODS
+    def get_user_by_id(self, user_id):
+        """
+        """
+        user = self.db.session.query(User).filter(User.id == user_id).first()
+        if not user:
+            raise UserNotFound()
+        return user
+    
     def get_user_by_email(self, email):
         """
         """
