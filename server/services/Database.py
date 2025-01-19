@@ -11,7 +11,7 @@ from models.Playbook import Playbook
 from models.PlayAnswer import PlayAnswer
 from models.User import User
 
-from exceptions import InvalidEmailAddress, EmailAddressAlreadyInUse, ClassroomNotFound, UserNotFound, Unauthorized, PlaybookNotFound, PlayNotFound
+from exceptions import InvalidEmailAddress, EmailAddressAlreadyInUse, ClassroomNotFound, UserNotFound, Unauthorized, PlaybookNotFound, PlayNotFound, LectureNotFound
 
 # DATABASE CLASS
 class Database:
@@ -227,3 +227,96 @@ class Database:
         play.play_answer = play_answer
         self.db.session.commit()
         return play
+    
+    # LECTURE METHODS
+    def get_lectures(self, classroom_id, user_id):
+        """
+        """
+        classroom = self.db.session.query(Classroom).filter(Classroom.id == classroom_id).first()
+        if not classroom:
+            raise ClassroomNotFound()
+        if classroom.teacher_id != user_id or user_id not in [student.id for student in classroom.students]:
+            raise Unauthorized()
+        lectures = classroom.lectures
+        return lectures
+    
+    def create_lecture(self, name, description, user_id, image_url, classroom_id, playbook_id):
+        """
+        """
+        classroom = self.db.session.query(Classroom).filter(Classroom.id == classroom_id).first()
+        if not classroom:
+            raise ClassroomNotFound()
+        if classroom.teacher_id != user_id:
+            raise Unauthorized()
+        playbook = self.db.session.query(Playbook).filter(Playbook.id == playbook_id).first()
+        if not playbook:
+            raise PlaybookNotFound()
+        lecture = Lecture(name=name, description=description, image_url=image_url, is_active=True, classroom_id=classroom_id, playbook_id=playbook_id)
+        self.db.session.add(lecture)
+        self.db.session.commit()
+        return lecture
+    
+    def get_lecture(self, lecture_id, user_id):
+        """
+        """
+        lecture = self.db.session.query(Lecture).filter(Lecture.id == lecture_id).first()
+        if not lecture:
+            raise LectureNotFound()
+        classroom = self.db.session.query(Classroom).filter(Classroom.id == lecture.classroom_id).first()
+        if not classroom:
+            raise ClassroomNotFound()
+        if classroom.teacher_id != user_id or user_id not in [student.id for student in classroom.students]:
+            raise Unauthorized()
+        return lecture
+    
+    def set_inactive(self, lecture_id, teacher_id):
+        """
+        """
+        lecture = self.db.session.query(Lecture).filter(Lecture.id == lecture_id).first()
+        if not lecture:
+            raise LectureNotFound()
+        classroom = self.db.session.query(Classroom).filter(Classroom.id == lecture.classroom_id).first()
+        if not classroom:
+            raise ClassroomNotFound()
+        if classroom.teacher_id != teacher_id:
+            raise Unauthorized()
+        lecture.is_active = False
+        self.db.session.commit()
+        return lecture
+    
+    # PLAY ANSWER METHODS
+    def create_play_answer(self, play_id, user_id, lecture_id, answer):
+        """
+        """
+        play = self.db.session.query(Play).filter(Play.id == play_id).first()
+        if not play:
+            raise PlayNotFound()
+        lecture = self.db.session.query(Lecture).filter(Lecture.id == lecture_id).first()
+        if not lecture:
+            raise LectureNotFound()
+        classroom = self.db.session.query(Classroom).filter(Classroom.id == lecture.classroom_id).first()
+        if not classroom:
+            raise ClassroomNotFound()
+        if user_id not in [student.id for student in classroom.students]:
+            raise Unauthorized()
+        play_answer = PlayAnswer(answer=answer, play_id=play_id, user_id=user_id)
+        self.db.session.add(play_answer)
+        self.db.session.commit()
+        return play_answer
+    
+    def get_play_answers(self, play_id, user_id):
+        """
+        """
+        play = self.db.session.query(Play).filter(Play.id == play_id).first()
+        if not play:
+            raise PlayNotFound()
+        lecture = self.db.session.query(Lecture).filter(Lecture.id == play.playbook_id).first()
+        if not lecture:
+            raise LectureNotFound()
+        classroom = self.db.session.query(Classroom).filter(Classroom.id == lecture.classroom_id).first()
+        if not classroom:
+            raise ClassroomNotFound()
+        if user_id not in [student.id for student in classroom.students]:
+            raise Unauthorized()
+        play_answers = play.answers
+        return play_answers

@@ -74,3 +74,33 @@ def update_play(play_id) -> tuple:
         return jsonify({"play": play}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+@play_bp.route('/<int:play_id>/answer', methods=['POST'])
+@verified_login_required
+def create_play_answer(play_id) -> tuple:
+    """
+    """
+    try:
+        db = current_app.config['database']
+        user_id = session.get('user_id')
+        lecture_id = request.json.get('lecture_id')
+        play_answer = request.json.get('play_answer')
+        if not play_answer:
+            raise MissingFields()
+        play = db.create_play_answer(play_id, user_id, lecture_id, play_answer)
+        return jsonify({"play": play}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+@play_bp.route('/<int:play_id>/answers', methods=['GET'])
+@verified_login_required
+def get_play_answers(play_id) -> tuple:
+    """
+    """
+    try:
+        db = current_app.config['database']
+        user_id = session.get('user_id')
+        answers = db.get_play_answers(play_id, user_id)
+        return jsonify({"answers": answers}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400

@@ -10,7 +10,7 @@ from services.Database import Database
 from services.Emailer import Emailer
 
 from api.auth_routes import auth_bp
-from server.api.classroom_routes import classroom_bp
+from api.classroom_routes import classroom_bp
 from api.email_routes import email_bp
 from api.playbook_routes import playbook_bp
 from api.play_routes import play_bp

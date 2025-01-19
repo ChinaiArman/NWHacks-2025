@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, request, current_app, session
 
 from services.decorators import verified_login_required, unverified_login_required
 
-from exceptions import EmailAlreadyExists, MissingFields
+from exceptions import MissingFields
 
 
 # DEFINE BLUEPRINT

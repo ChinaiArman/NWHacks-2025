@@ -11,8 +11,7 @@ class Lecture(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     image_url = db.Column(db.String(255), nullable=True)
-    is_active = db.Column(db.Boolean, default=True)
-    is_completed = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=False)
     
     # Foreign Keys
     classroom_id = db.Column(db.Integer, db.ForeignKey('classrooms.id'), nullable=False)

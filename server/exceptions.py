@@ -80,3 +80,11 @@ class PlayNotFound(Exception):
         """
         """
         super().__init__("Play not found")
+
+class LectureNotFound(Exception):
+    """
+    """
+    def __init__(self):
+        """
+        """
+        super().__init__("Lecture not found")
