@@ -64,3 +64,19 @@ class Unauthorized(Exception):
         """
         """
         super().__init__("Unauthorized")
+
+class PlaybookNotFound(Exception):
+    """
+    """
+    def __init__(self):
+        """
+        """
+        super().__init__("Playbook not found")
+
+class PlayNotFound(Exception):
+    """
+    """
+    def __init__(self):
+        """
+        """
+        super().__init__("Play not found")

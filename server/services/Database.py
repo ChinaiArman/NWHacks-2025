@@ -11,7 +11,7 @@ from models.Playbook import Playbook
 from models.PlayAnswer import PlayAnswer
 from models.User import User
 
-from exceptions import InvalidEmailAddress, EmailAddressAlreadyInUse, ClassroomNotFound, UserNotFound, Unauthorized
+from exceptions import InvalidEmailAddress, EmailAddressAlreadyInUse, ClassroomNotFound, UserNotFound, Unauthorized, PlaybookNotFound, PlayNotFound
 
 # DATABASE CLASS
 class Database:
@@ -120,3 +120,110 @@ class Database:
         classroom.students.remove(student)
         self.db.session.commit()
         return classroom
+    
+    # PLAYBOOK METHODS
+    def get_playbooks(self, teacher_id):
+        """
+        """
+        playbooks = self.db.session.query(Playbook).filter(Playbook.teacher_id == teacher_id).all()
+        return playbooks
+    
+    def create_playbook(self, name, description, teacher_id, image_url):
+        """
+        """
+        playbook = Playbook(name=name, description=description, teacher_id=teacher_id, image_url=image_url)
+        self.db.session.add(playbook)
+        self.db.session.commit()
+        return playbook
+    
+    def get_playbook_by_id(self, playbook_id, teacher_id):
+        """
+        """
+        playbook = self.db.session.query(Playbook).filter(Playbook.id == playbook_id).first()
+        if not playbook:
+            raise PlaybookNotFound()
+        if playbook.teacher_id != teacher_id:
+            raise Unauthorized()
+        return playbook
+    
+    def delete_playbook(self, playbook_id, teacher_id):
+        """
+        """
+        playbook = self.db.session.query(Playbook).filter(Playbook.id == playbook_id).first()
+        if not playbook:
+            raise PlaybookNotFound()
+        if playbook.teacher_id != teacher_id:
+            raise Unauthorized()
+        self.db.session.delete(playbook)
+        self.db.session.commit()
+        return playbook
+    
+    def get_plays(self, playbook_id, teacher_id):
+        """
+        """
+        playbook = self.db.session.query(Playbook).filter(Playbook.id == playbook_id).first()
+        if not playbook:
+            raise PlaybookNotFound()
+        if playbook.teacher_id != teacher_id:
+            raise Unauthorized()
+        plays = playbook.plays
+        return plays
+    
+    # PLAY METHODS
+    def create_play(self, teacher_id, playbook_id, play_type, play_prompt, play_answer): 
+        """
+        """
+        playbook = self.db.session.query(Playbook).filter(Playbook.id == playbook_id).first()
+        if not playbook:
+            raise PlaybookNotFound()
+        if playbook.teacher_id != teacher_id:
+            raise Unauthorized()
+        play = Play(play_type=play_type, play_prompt=play_prompt, play_answer=play_answer, playbook_id=playbook_id)
+        self.db.session.add(play)
+        self.db.session.commit()
+        return play
+    
+    def delete_play(self, play_id, teacher_id):
+        """
+        """
+        play = self.db.session.query(Play).filter(Play.id == play_id).first()
+        if not play:
+            raise PlayNotFound()
+        playbook = self.db.session.query(Playbook).filter(Playbook.id == play.playbook_id).first()
+        if not playbook:
+            raise PlaybookNotFound()
+        if playbook.teacher_id != teacher_id:
+            raise Unauthorized()
+        self.db.session.delete(play)
+        self.db.session.commit()
+        return play
+
+    def get_play(self, play_id, teacher_id):
+        """
+        """
+        play = self.db.session.query(Play).filter(Play.id == play_id).first()
+        if not play:
+            raise PlayNotFound()
+        playbook = self.db.session.query(Playbook).filter(Playbook.id == play.playbook_id).first()
+        if not playbook:
+            raise PlaybookNotFound()
+        if playbook.teacher_id != teacher_id:
+            raise Unauthorized()
+        return play
+    
+    def update_play(self, play_id, teacher_id, play_type, play_prompt, play_answer):
+        """
+        """
+        play = self.db.session.query(Play).filter(Play.id == play_id).first()
+        if not play:
+            raise PlayNotFound()
+        playbook = self.db.session.query(Playbook).filter(Playbook.id == play.playbook_id).first()
+        if not playbook:
+            raise PlaybookNotFound()
+        if playbook.teacher_id != teacher_id:
+            raise Unauthorized()
+        play.play_type = play_type
+        play.play_prompt = play_prompt
+        play.play_answer = play_answer
+        self.db.session.commit()
+        return play
